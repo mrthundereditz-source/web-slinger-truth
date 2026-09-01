@@ -1,11 +1,11 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 
-type Search = { claim?: string };
+type Search = { claim: string };
 
 export const Route = createFileRoute("/analysis")({
   validateSearch: (search: Record<string, unknown>): Search => ({
-    claim: typeof search.claim === "string" ? search.claim : undefined,
+    claim: typeof search["claim"] === "string" ? search["claim"] : "",
   }),
   head: () => ({
     meta: [
