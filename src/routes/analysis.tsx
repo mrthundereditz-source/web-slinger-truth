@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { FileText, Globe, GraduationCap, Zap, Newspaper, Share2, ShieldCheck } from "lucide-react";
 import { useMemo } from "react";
 
 type Search = { claim: string };
@@ -40,10 +41,28 @@ function hashString(s: string) {
 
 function verdictFor(score: number) {
   if (score >= 75)
-    return { label: "VERIFIED", tone: "text-web-cyan", chip: "text-web-cyan bg-web-cyan/15 border-web-cyan/40", bar: "from-web-cyan to-web-cyan" };
+    return {
+      label: "VERIFIED TRUE",
+      tone: "text-web-cyan",
+      glow: "shadow-[0_0_30px_color-mix(in_oklab,var(--web-cyan)_25%,transparent)]",
+      chipBorder: "border-web-cyan/50 bg-web-cyan/10 text-web-cyan",
+      dot: "bg-web-cyan",
+    };
   if (score >= 45)
-    return { label: "MIXED", tone: "text-web-gold", chip: "text-web-gold bg-web-gold/15 border-web-gold/40", bar: "from-web-gold to-web-red" };
-  return { label: "FALSE", tone: "text-web-red-bright", chip: "text-web-red-bright bg-web-red/15 border-web-red/40", bar: "from-web-red to-web-red-bright" };
+    return {
+      label: "MIXED SIGNALS",
+      tone: "text-web-gold",
+      glow: "shadow-[0_0_30px_color-mix(in_oklab,var(--web-gold)_25%,transparent)]",
+      chipBorder: "border-web-gold/50 bg-web-gold/10 text-web-gold",
+      dot: "bg-web-gold",
+    };
+  return {
+    label: "FALSE TRAIL",
+    tone: "text-web-red-bright",
+    glow: "shadow-[0_0_30px_color-mix(in_oklab,var(--web-red)_30%,transparent)]",
+    chipBorder: "border-web-red/50 bg-web-red/10 text-web-red-bright",
+    dot: "bg-web-red-bright",
+  };
 }
 
 type Factor = { name: string; score: number; note: string };
@@ -61,6 +80,7 @@ function buildAnalysis(claim: string) {
 
   const score = 30 + Math.round(rand() * 68);
   const confidence = 70 + Math.round(rand() * 28);
+  const momentum = Math.round((rand() * 24 - 6) * 10) / 10;
 
   const factors: Factor[] = [
     { name: "Source credibility", score: 25 + Math.round(rand() * 75), note: "Weighted track record of every traced source." },
@@ -72,7 +92,7 @@ function buildAnalysis(claim: string) {
   ];
 
   const timeline = Array.from({ length: 14 }, (_, i) => {
-    const base = score + Math.sin(i * 0.9 + seed % 7) * 16;
+    const base = score + Math.sin(i * 0.9 + (seed % 7)) * 16;
     return Math.max(5, Math.min(99, Math.round(base + (rand() - 0.5) * 14)));
   });
 
@@ -87,19 +107,44 @@ function buildAnalysis(claim: string) {
   ];
   const sources = sourcePool.slice(0, 4 + (seed % 3));
 
-  return { score, confidence, factors, timeline, sources };
+  return { score, confidence, momentum, factors, timeline, sources };
+}
+
+const SOURCE_ICONS = [FileText, Newspaper, GraduationCap, Share2, Globe, Zap, ShieldCheck];
+
+/* ---------------- shared chrome ---------------- */
+
+function Panel({
+  children,
+  className = "",
+  hairline = "via-web-red-bright",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  hairline?: string;
+  delay?: number;
+}) {
+  return (
+    <div
+      className={`animate-rise-in relative overflow-hidden rounded-2xl border border-border/80 bg-card/50 backdrop-blur-xl ${className}`}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      <div className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent ${hairline} to-transparent opacity-60`} aria-hidden="true" />
+      {children}
+    </div>
+  );
 }
 
 /* ---------------- charts ---------------- */
 
 function TrustGauge({ score }: { score: number }) {
   const R = 84;
-  const CIRC = Math.PI * R; // half circle
+  const CIRC = Math.PI * R;
   const filled = (score / 100) * CIRC;
   return (
     <div className="relative mx-auto w-56">
-      <svg viewBox="0 0 200 112" className="w-full">
-        {/* web spokes on the dial */}
+      <svg viewBox="0 0 200 112" className="w-full drop-shadow-[0_0_18px_color-mix(in_oklab,var(--web-red)_35%,transparent)]">
         {[0, 30, 60, 90, 120, 150, 180].map((a) => {
           const rad = (Math.PI * a) / 180;
           return (
@@ -114,14 +159,15 @@ function TrustGauge({ score }: { score: number }) {
             />
           );
         })}
-        <path d="M 16 104 A 84 84 0 0 1 184 104" fill="none" stroke="var(--muted)" strokeWidth="12" strokeLinecap="round" />
+        <path d="M 16 104 A 84 84 0 0 1 184 104" fill="none" stroke="var(--muted)" strokeWidth="10" strokeLinecap="round" />
         <path
           d="M 16 104 A 84 84 0 0 1 184 104"
           fill="none"
           stroke="url(#gaugeGrad)"
-          strokeWidth="12"
+          strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={`${filled} ${CIRC}`}
+          className="animate-gauge-sweep"
         />
         <defs>
           <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
@@ -131,9 +177,9 @@ function TrustGauge({ score }: { score: number }) {
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute inset-x-0 bottom-0 text-center">
-        <span className="font-display text-5xl text-foreground">{score}</span>
-        <span className="font-mono2 text-sm text-muted-foreground">/100</span>
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center">
+        <span className="font-display text-6xl leading-none tracking-tight text-foreground">{score}</span>
+        <span className="mt-1 font-mono2 text-[10px] font-bold uppercase tracking-[0.25em] text-web-cyan">Score impact</span>
       </div>
     </div>
   );
@@ -148,32 +194,28 @@ function RadarWeb({ factors }: { factors: Factor[] }) {
     const angle = (2 * Math.PI * i) / n - Math.PI / 2;
     return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
   };
-  const ring = (f: number) =>
-    factors
-      .map((_, i) => point(i, R * f).join(","))
-      .join(" ");
-  const valuePoly = factors
-    .map((f, i) => point(i, (R * f.score) / 100).join(","))
-    .join(" ");
+  const ring = (f: number) => factors.map((_, i) => point(i, R * f).join(",")).join(" ");
+  const valuePoly = factors.map((f, i) => point(i, (R * f.score) / 100).join(",")).join(" ");
 
   return (
-    <svg viewBox="0 0 260 240" className="mx-auto w-full max-w-sm">
+    <svg viewBox="0 0 260 240" className="mx-auto w-full max-w-xs drop-shadow-[0_0_16px_color-mix(in_oklab,var(--web-cyan)_20%,transparent)]">
       {[0.25, 0.5, 0.75, 1].map((f) => (
         <polygon key={f} points={ring(f)} fill="none" stroke="var(--border)" strokeWidth="1" />
       ))}
       {factors.map((_, i) => {
         const [x, y] = point(i, R);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border)" strokeWidth="1" />;
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--border)" strokeWidth="0.5" />;
       })}
       <polygon
         points={valuePoly}
-        fill="color-mix(in oklab, var(--web-red) 30%, transparent)"
-        stroke="var(--web-red-bright)"
+        fill="color-mix(in oklab, var(--web-cyan) 12%, transparent)"
+        stroke="var(--web-cyan)"
         strokeWidth="2"
+        strokeLinejoin="round"
       />
       {factors.map((f, i) => {
         const [x, y] = point(i, (R * f.score) / 100);
-        return <circle key={i} cx={x} cy={y} r="3" fill="var(--web-cyan)" />;
+        return <circle key={i} cx={x} cy={y} r="2.5" fill="var(--web-red-bright)" />;
       })}
       {factors.map((f, i) => {
         const [x, y] = point(i, R + 18);
@@ -205,20 +247,25 @@ function ConfidenceGraph({ timeline }: { timeline: number[] }) {
   const area = `${path} L ${xs(timeline.length - 1)} ${h - pad} L ${xs(0)} ${h - pad} Z`;
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none" style={{ height: 180 }}>
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className="w-full drop-shadow-[0_0_15px_color-mix(in_oklab,var(--web-red)_25%,transparent)]"
+      preserveAspectRatio="none"
+      style={{ height: 180 }}
+    >
       <defs>
         <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--web-cyan)" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="var(--web-cyan)" stopOpacity="0" />
+          <stop offset="0%" stopColor="var(--web-red-bright)" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="var(--web-red-bright)" stopOpacity="0" />
         </linearGradient>
       </defs>
       {[25, 50, 75].map((g) => (
-        <line key={g} x1={pad} x2={w - pad} y1={ys(g)} y2={ys(g)} stroke="var(--border)" strokeDasharray="4 6" />
+        <line key={g} x1={pad} x2={w - pad} y1={ys(g)} y2={ys(g)} stroke="var(--border)" strokeDasharray="10 10" />
       ))}
       <path d={area} fill="url(#areaGrad)" />
-      <path d={path} fill="none" stroke="var(--web-cyan)" strokeWidth="2.5" strokeLinejoin="round" />
+      <path d={path} fill="none" stroke="var(--web-red-bright)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
       {timeline.map((v, i) => (
-        <circle key={i} cx={xs(i)} cy={ys(v)} r="3.5" fill="var(--night-1)" stroke="var(--web-cyan)" strokeWidth="2" />
+        <circle key={i} cx={xs(i)} cy={ys(v)} r="3.5" fill="var(--night-1)" stroke="var(--web-red-bright)" strokeWidth="2" />
       ))}
     </svg>
   );
@@ -235,8 +282,12 @@ function AnalysisPage() {
 
   return (
     <div className="relative min-h-screen font-body">
-      {/* backdrop glow */}
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(70%_50%_at_80%_-10%,var(--night-3),transparent_60%),radial-gradient(50%_40%_at_0%_100%,color-mix(in_oklab,var(--web-red)_22%,transparent),transparent_60%)]" aria-hidden="true" />
+      {/* halftone + city glow backdrop */}
+      <div className="halftone pointer-events-none fixed inset-0 opacity-[0.05]" aria-hidden="true" />
+      <div
+        className="pointer-events-none fixed inset-0 bg-[radial-gradient(70%_50%_at_80%_-10%,var(--night-3),transparent_60%),radial-gradient(50%_40%_at_0%_100%,color-mix(in_oklab,var(--web-red)_22%,transparent),transparent_60%)]"
+        aria-hidden="true"
+      />
 
       <header className="relative z-10 border-b border-border/60 bg-night-1/60 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
@@ -248,121 +299,156 @@ function AnalysisPage() {
           </Link>
           <Link
             to="/"
-            className="rounded-lg border border-border px-3.5 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:border-web-red-bright hover:text-foreground"
+            className="rounded-lg border border-border px-3.5 py-2 text-sm font-semibold text-muted-foreground transition-all hover:border-web-red-bright hover:text-foreground hover:shadow-[0_0_16px_color-mix(in_oklab,var(--web-red)_30%,transparent)]"
           >
             New scan
           </Link>
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-5 py-12">
-        {/* claim header */}
-        <div className="animate-rise-in">
-          <p className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Trust report · sense-v3</p>
-          <h1 className="mt-3 max-w-3xl text-balance font-display text-3xl leading-tight text-foreground md:text-4xl">
-            {claim ? `\u201c${claim}\u201d` : "Sample claim report"}
-          </h1>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span className={`rounded-md border px-3 py-1 font-mono2 text-xs font-semibold uppercase tracking-wider ${verdict.chip}`}>
-              {verdict.label}
-            </span>
-            <span className="font-mono2 text-xs text-muted-foreground">{analysis.confidence}% model confidence</span>
-            <span className="font-mono2 text-xs text-muted-foreground">
-              {supports} sources for · {contradicts} against
-            </span>
-          </div>
-        </div>
-
-        {/* score + radar */}
-        <section className="mt-10 grid gap-5 lg:grid-cols-2">
-          <div className="animate-rise-in halftone-red relative overflow-hidden rounded-2xl border border-border bg-card/70 p-6 backdrop-blur-md [animation-delay:80ms]">
-            <h2 className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Overall trust score</h2>
-            <div className="mt-6">
-              <TrustGauge score={analysis.score} />
+      <main className="relative z-10 mx-auto max-w-6xl space-y-6 px-5 py-10">
+        {/* claim header panel */}
+        <Panel className="p-8" delay={0}>
+          <div className="pointer-events-none absolute -mr-32 -mt-32 right-0 top-0 size-64 rounded-full bg-web-red/10 blur-[100px]" aria-hidden="true" />
+          <div className="pointer-events-none absolute -mb-32 -ml-32 bottom-0 left-0 size-64 rounded-full bg-web-cyan/10 blur-[100px]" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="size-2 rotate-45 bg-web-cyan" aria-hidden="true" />
+                <span className="font-mono2 text-xs font-bold uppercase tracking-[0.3em] text-web-cyan">
+                  Synthetic intelligence analysis
+                </span>
+              </div>
+              <h1 className="max-w-3xl text-balance font-body text-3xl font-bold italic leading-tight tracking-tight text-foreground md:text-4xl">
+                {claim ? `“${claim}”` : "Sample claim report"}
+              </h1>
+              <p className="font-mono2 text-xs text-muted-foreground">
+                {analysis.confidence}% model confidence · {supports} sources for · {contradicts} against
+              </p>
             </div>
-            <p className={`mt-4 text-center font-display text-2xl tracking-wide ${verdict.tone}`}>{verdict.label}</p>
-            <p className="mt-2 text-center text-sm text-muted-foreground">
+            <div className="shrink-0 -skew-x-6">
+              <div
+                className={`inline-flex items-center gap-4 rounded-xl border px-8 py-4 ${verdict.chipBorder} ${verdict.glow}`}
+              >
+                <div className={`size-3 animate-pulse rounded-full ${verdict.dot}`} aria-hidden="true" />
+                <span className="skew-x-6 font-display text-3xl tracking-widest">{verdict.label}</span>
+              </div>
+            </div>
+          </div>
+        </Panel>
+
+        {/* gauge + radar + signals */}
+        <section className="grid gap-6 md:grid-cols-3">
+          <Panel className="flex flex-col items-center justify-center p-8 text-center" hairline="via-web-red-bright" delay={80}>
+            <h2 className="mb-8 font-mono2 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Trust confidence</h2>
+            <TrustGauge score={analysis.score} />
+            <p className="mt-8 text-sm font-light leading-relaxed text-muted-foreground">
               Weighed across {analysis.factors.length} signals and {analysis.sources.length} traced sources.
             </p>
-          </div>
+          </Panel>
 
-          <div className="animate-rise-in relative overflow-hidden rounded-2xl border border-border bg-card/70 p-6 backdrop-blur-md [animation-delay:160ms]">
-            <h2 className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Evidence web</h2>
-            <div className="mt-4">
-              <RadarWeb factors={analysis.factors} />
-            </div>
-          </div>
-        </section>
+          <Panel className="flex flex-col items-center justify-center p-8" hairline="via-web-cyan" delay={160}>
+            <h2 className="mb-6 font-mono2 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Evidence web</h2>
+            <RadarWeb factors={analysis.factors} />
+          </Panel>
 
-        {/* confidence graph */}
-        <section className="animate-rise-in mt-5 rounded-2xl border border-border bg-card/70 p-6 backdrop-blur-md [animation-delay:240ms]">
-          <div className="flex items-center justify-between">
-            <h2 className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Trust over the claim's spread</h2>
-            <span className="font-mono2 text-[11px] text-muted-foreground">last 14 checkpoints</span>
-          </div>
-          <div className="mt-4">
-            <ConfidenceGraph timeline={analysis.timeline} />
-          </div>
-        </section>
-
-        {/* factor bars + sources */}
-        <section className="mt-5 grid gap-5 lg:grid-cols-2">
-          <div className="animate-rise-in rounded-2xl border border-border bg-card/70 p-6 backdrop-blur-md [animation-delay:320ms]">
-            <h2 className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Signal breakdown</h2>
-            <div className="mt-5 space-y-4">
-              {analysis.factors.map((f) => (
-                <div key={f.name}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-foreground">{f.name}</span>
-                    <span className="font-mono2 text-xs text-muted-foreground">{f.score}/100</span>
+          <Panel className="p-8" hairline="via-web-red-bright" delay={240}>
+            <h2 className="mb-5 font-mono2 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Signal vectors</h2>
+            <div className="space-y-4">
+              {analysis.factors.map((f, i) => (
+                <div key={f.name} className="space-y-1.5">
+                  <div className="flex justify-between font-mono2 text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-muted-foreground">{f.name}</span>
+                    <span className="text-foreground">{f.score}%</span>
                   </div>
-                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-foreground/10">
+                  <div className="h-1 w-full overflow-hidden rounded-full bg-foreground/10">
                     <div
-                      className={`h-full rounded-full bg-gradient-to-r ${f.score >= 60 ? "from-web-cyan to-web-cyan" : f.score >= 40 ? "from-web-gold to-web-gold" : "from-web-red to-web-red-bright"}`}
+                      className={`h-full rounded-full ${i % 2 === 0 ? "bg-web-cyan shadow-[0_0_8px_color-mix(in_oklab,var(--web-cyan)_60%,transparent)]" : "bg-web-red-bright shadow-[0_0_8px_color-mix(in_oklab,var(--web-red-bright)_60%,transparent)]"}`}
                       style={{ width: `${f.score}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{f.note}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </Panel>
+        </section>
 
-          <div className="animate-rise-in rounded-2xl border border-border bg-card/70 p-6 backdrop-blur-md [animation-delay:400ms]">
-            <h2 className="font-mono2 text-[11px] uppercase tracking-[0.2em] text-web-cyan">Source trail</h2>
-            <ul className="mt-5 space-y-3">
-              {analysis.sources.map((s) => (
-                <li key={s.name} className="rounded-xl border border-border bg-night-1/60 p-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{s.name}</p>
-                      <p className="text-xs text-muted-foreground">{s.type}</p>
+        {/* velocity chart */}
+        <Panel className="p-8" hairline="via-web-cyan" delay={320}>
+          <div className="pointer-events-none absolute right-0 top-0 size-32 -translate-y-10 translate-x-10 opacity-20" aria-hidden="true">
+            <svg viewBox="0 0 100 100" className="fill-web-cyan">
+              <path d="M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z" />
+            </svg>
+          </div>
+          <div className="mb-8 flex items-end justify-between">
+            <div className="space-y-1">
+              <h2 className="font-mono2 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Trust over spread</h2>
+              <p className="text-sm font-light text-muted-foreground">Veracity momentum tracked across social graph clusters</p>
+            </div>
+            <div className="-skew-x-6 border-r-2 border-web-cyan bg-web-cyan/5 px-4 py-2 text-right">
+              <span className="font-display text-3xl tracking-wider text-web-cyan">
+                {analysis.momentum >= 0 ? "+" : ""}
+                {analysis.momentum}%
+              </span>
+              <span className="block font-mono2 text-[9px] font-bold uppercase tracking-tighter text-muted-foreground">
+                Spread acceleration
+              </span>
+            </div>
+          </div>
+          <ConfidenceGraph timeline={analysis.timeline} />
+        </Panel>
+
+        {/* source trail cards */}
+        <section className="animate-rise-in [animation-delay:400ms]">
+          <div className="mb-5 flex items-center gap-4">
+            <h2 className="font-mono2 text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Source trail</h2>
+            <div className="h-px flex-1 bg-gradient-to-r from-web-red/60 to-transparent" aria-hidden="true" />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {analysis.sources.map((s, i) => {
+              const Icon = SOURCE_ICONS[i % SOURCE_ICONS.length];
+              return (
+                <div
+                  key={s.name}
+                  className="group relative rounded-xl border border-border/80 bg-card/50 p-6 backdrop-blur-md transition-all hover:-translate-y-1 hover:border-web-red-bright/50 hover:shadow-[0_0_24px_color-mix(in_oklab,var(--web-red)_15%,transparent)]"
+                >
+                  <div className="absolute right-0 top-0 p-2 opacity-30" aria-hidden="true">
+                    <div className="size-4 border-r border-t border-web-cyan" />
+                  </div>
+                  <div className="mb-4 flex items-start justify-between">
+                    <div className="grid size-10 place-items-center rounded-lg border border-border bg-night-1/80 text-web-cyan">
+                      <Icon className="size-5" />
                     </div>
                     <span
-                      className={`rounded px-2 py-0.5 font-mono2 text-[10px] font-semibold uppercase tracking-wider ${
+                      className={`rounded px-2 py-1 font-mono2 text-[9px] font-bold uppercase tracking-tighter ${
                         s.stance === "supports"
-                          ? "bg-web-cyan/15 text-web-cyan"
+                          ? "border border-web-cyan/20 bg-web-cyan/10 text-web-cyan"
                           : s.stance === "contradicts"
-                            ? "bg-web-red/15 text-web-red-bright"
-                            : "bg-web-gold/15 text-web-gold"
+                            ? "border border-web-red/20 bg-web-red/10 text-web-red-bright"
+                            : "border border-web-gold/20 bg-web-gold/10 text-web-gold"
                       }`}
                     >
                       {s.stance}
                     </span>
                   </div>
-                  <div className="mt-3 flex items-center gap-2">
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-foreground/10">
-                      <div className="h-full rounded-full bg-web-blue" style={{ width: `${s.reliability}%` }} />
+                  <h3 className="mb-1 font-bold tracking-tight text-foreground">{s.name}</h3>
+                  <p className="mb-4 text-xs font-light text-muted-foreground">{s.type}</p>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-foreground/10">
+                      <div
+                        className={`h-full rounded-full ${s.reliability >= 60 ? "bg-web-cyan" : "bg-web-red-bright"}`}
+                        style={{ width: `${s.reliability}%` }}
+                      />
                     </div>
-                    <span className="font-mono2 text-[11px] text-muted-foreground">{s.reliability}%</span>
+                    <span className="font-mono2 text-[10px] text-muted-foreground">{s.reliability}%</span>
                   </div>
-                </li>
-              ))}
-            </ul>
+                </div>
+              );
+            })}
           </div>
         </section>
 
-        <p className="mt-8 text-center font-mono2 text-[11px] text-muted-foreground">
+        <p className="pt-2 text-center font-mono2 text-[11px] text-muted-foreground">
           Demo analysis · connect Webtruth's AI backend for live verdicts
         </p>
       </main>
