@@ -208,7 +208,7 @@ function Scanner() {
       { verdict: "VERIFIED", note: "Claim matches the primary source and two independent wire reports. Thread is intact end to end.", conf: 96 },
       { verdict: "FALSE", note: "No primary record exists. The story originated in a repost chain and contradicts the official dataset.", conf: 91 },
     ];
-    setResult(pool[claim.length % pool.length]);
+    setResult(pool[claim.length % pool.length] ?? null);
   };
 
   return (
