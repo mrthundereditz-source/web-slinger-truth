@@ -2,73 +2,87 @@
 
 **Your spidey-sense for what's true.**
 
-Paste a claim. Get a verdict before the rumor spreads.
+An AI fact-checker that reads a claim, traces the source trail, and returns a verdict before the rumor spreads.
 
-[Live demo](https://weboftrust.netlify.app/) · [Trust report](https://weboftrust.netlify.app/analysis)
-
----
-
-## The problem
-
-Headlines, screenshots, and posts move faster than sources. By the time you look something up, it is already being forwarded.
-
-## The product
-
-WEB OF TRUST is an AI fact-checker with a spider-sense theme. You paste a headline, quote, or post. The app splits it into checkable assertions, traces each one toward sources, and returns **Verified**, **Mixed**, or **False** with a confidence score and a citation trail.
-
-No account for the first check. Verdict in seconds.
+**Demo:** [weboftrust.netlify.app](https://weboftrust.netlify.app/)  
+**Report:** [weboftrust.netlify.app/analysis](https://weboftrust.netlify.app/analysis)
 
 ---
 
-## How it works
+## Why
 
-1. **Snag the claim** — paste a headline, quote, or post. The scanner breaks it into individual assertions.
-2. **Trace every thread** — each fact is followed to a primary source, archive, or dataset. Dead links and repost chains get flagged.
-3. **Sling the verdict** — one label you can forward: Verified, Mixed, or False, plus the trail behind it.
+Rumors travel as screenshots. Sources do not. WEB OF TRUST is a first-pass checker for a headline, quote, or post — fast enough to use before you share it, detailed enough that the answer is not just a color.
 
-Live model label in the UI: `sense-v3`.
+## What it does
+
+Paste a claim. The scanner splits it into checkable assertions, traces each one toward a primary source, archive, or dataset, and slings back **Verified**, **Mixed**, or **False** with confidence and a citation trail.
+
+- No account on the first check
+- Live scanner labeled `sense-v3`
+- Dead links and repost chains get flagged
+- Full report breaks the score into evidence signals, not one opaque number
 
 ---
 
-## What judges will see
+## How a check works
 
-**Home** — [weboftrust.netlify.app](https://weboftrust.netlify.app/)
+1. **Snag the claim** — paste a headline, quote, or post. Vague numbers cannot hide inside a longer sentence.
+2. **Trace every thread** — follow each assertion to a source. Flag weak chains.
+3. **Sling the verdict** — one label plus the trail you can forward.
 
-| Section | What it does |
+| Verdict | Meaning |
 | --- | --- |
-| Hero + scanner | Paste a claim, run a fast check, or open the full report |
-| Caught in the web | Recent checks with verdict + confidence |
-| How it works | The three-step loop above |
+| Verified | The claim lines up with the traced sources |
+| Mixed | Partly true, contested, or incomplete |
+| False | Conflicts with the evidence, or sits on a bad trail |
+
+Confidence is a model score. The trail is the part that matters.
+
+---
+
+## The site
+
+### Home — `/`
+
+Night-city landing page with the scanner in the hero.
+
+| Piece | Details |
+| --- | --- |
+| Header | How it works, Caught in the web, The creed, Open scanner |
+| Hero | “Your spidey-sense for what's true.” Claim box, **Thwip! Run the check**, **Full trust report** |
+| Caught in the web | Recent checks with verdict + % confidence |
+| How it works | The three steps above |
 | The creed | “With great facts come great responsibility.” Free first check, no signup wall |
+| Footer | Independent verification · friendly neighborhood fact-checker · © 2026 |
 
-**Report** — [weboftrust.netlify.app/analysis](https://weboftrust.netlify.app/analysis)
+Recent checks currently on the page:
 
-| Block | What it shows |
+- FALSE 94% — “Drinking 8 glasses of water a day is medically required”
+- VERIFIED 98% — “The James Webb telescope captured a new nebula image”
+- MIXED 61% — “City will ban all e-scooters by 2027”
+- FALSE 89% — “New app updates secretly record your calls”
+- VERIFIED 97% — “Central bank holds rates steady this quarter”
+
+### Report — `/analysis`
+
+Dashboard for one claim, not a blog post.
+
+| Block | Details |
 | --- | --- |
-| Summary | Model confidence, sources for / against, overall trail label |
-| Evidence web | 6 signals: credibility, primary evidence, cross-verification, chain integrity, recency, language |
+| Summary | Model confidence, sources for / against, trail label (sample: FALSE TRAIL) |
+| Evidence web | Source credibility, primary evidence, cross-verification, chain integrity, recency & context, language signals |
 | Trust over spread | Whether the rumor is outrunning the evidence |
-| Source trail | Each source marked supports / neutral / contradicts |
+| Source trail | Each source marked **supports**, **neutral**, or **contradicts** |
 
-Example recent checks on the live home page: a “8 glasses of water a day” claim marked False, a JWST image claim marked Verified, an e-scooter ban claim marked Mixed.
+Sample trail on the live report: national statistics bureau (supports), wire service (supports), university lab (neutral), anonymous repost chain (contradicts).
 
----
-
-## Verdicts
-
-| Label | Meaning |
-| --- | --- |
-| **Verified** | The claim lines up with the traced sources |
-| **Mixed** | Partly true, contested, or incomplete |
-| **False** | Conflicts with the evidence, or sits on a weak trail |
-
-Confidence is a model score, not a court ruling. Read the trail before sharing the stamp.
+The report page is shipped as a designed sample until the live AI backend is connected. Use it to see the full verdict UI. Do not treat those sample numbers as a live check of a new paste.
 
 ---
 
-## Tech
+## Stack
 
-React + Vite single-page app, React Router (`/` and `/analysis`), Tailwind-style UI, hosted on Netlify.
+React · Vite · React Router · Tailwind-style UI · Netlify
 
 ```bash
 npm install
