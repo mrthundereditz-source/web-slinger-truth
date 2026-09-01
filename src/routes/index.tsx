@@ -277,6 +277,12 @@ function Scanner() {
                 <span className="font-mono2 text-[11px] text-web-cyan">{result.conf}%</span>
               </div>
             </div>
+            <button
+              onClick={openFullReport}
+              className="mt-3 w-full rounded-lg border border-web-cyan/40 bg-web-cyan/10 px-4 py-2 text-sm font-semibold text-web-cyan transition-colors hover:bg-web-cyan/20"
+            >
+              View full trust report →
+            </button>
           </div>
         )}
       </div>
