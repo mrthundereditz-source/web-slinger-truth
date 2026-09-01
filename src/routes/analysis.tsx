@@ -10,13 +10,13 @@ export const Route = createFileRoute("/analysis")({
   }),
   head: () => ({
     meta: [
-      { title: "Trust Report — Webtruth" },
+      { title: "Trust Report — WEB OF TRUST" },
       {
         name: "description",
         content:
-          "The full Webtruth trust report: overall trust score, evidence web, source trail, and confidence graph for the claim you scanned.",
+          "The full WEB OF TRUST trust report: overall trust score, evidence web, source trail, and confidence graph for the claim you scanned.",
       },
-      { property: "og:title", content: "Trust Report — Webtruth" },
+      { property: "og:title", content: "Trust Report — WEB OF TRUST" },
       {
         property: "og:description",
         content: "Trust score, evidence web, and source trail for your scanned claim.",
@@ -69,7 +69,7 @@ type Factor = { name: string; score: number; note: string };
 type SourceRow = { name: string; type: string; reliability: number; stance: "supports" | "contradicts" | "neutral" };
 
 function buildAnalysis(claim: string) {
-  const seed = hashString(claim || "webtruth");
+  const seed = hashString(claim || "web of trust");
   const rand = (() => {
     let s = seed || 1;
     return () => {
@@ -449,7 +449,7 @@ function AnalysisPage() {
         </section>
 
         <p className="pt-2 text-center font-mono2 text-[11px] text-muted-foreground">
-          Demo analysis · connect Webtruth's AI backend for live verdicts
+          Demo analysis · connect WEB OF TRUST's AI backend for live verdicts
         </p>
       </main>
     </div>

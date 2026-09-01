@@ -4,17 +4,17 @@ import { useMemo, useState } from "react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Webtruth — AI Fact-Checker with Spider-Sense" },
+      { title: "WEB OF TRUST — AI Fact-Checker with Spider-Sense" },
       {
         name: "description",
         content:
-          "Paste any claim. Webtruth's AI traces every thread of evidence across verified sources and returns a verdict before the rumor spreads. With great facts come great responsibility.",
+          "Paste any claim. WEB OF TRUST's AI traces every thread of evidence across verified sources and returns a verdict before the rumor spreads. With great facts come great responsibility.",
       },
-      { property: "og:title", content: "Webtruth — AI Fact-Checker with Spider-Sense" },
+      { property: "og:title", content: "WEB OF TRUST — AI Fact-Checker with Spider-Sense" },
       {
         property: "og:description",
         content:
-          "Paste any claim. Webtruth's AI traces every thread of evidence and returns a verdict before the rumor spreads.",
+          "Paste any claim. WEB OF TRUST's AI traces every thread of evidence and returns a verdict before the rumor spreads.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -294,7 +294,7 @@ const MOVES = [
   {
     num: "01",
     title: "Snag the claim",
-    body: "Paste a headline, quote, or post. Webtruth splits it into individual checkable assertions — no vague number hides in the web.",
+    body: "Paste a headline, quote, or post. WEB OF TRUST splits it into individual checkable assertions — no vague number hides in the web.",
   },
   {
     num: "02",
@@ -322,7 +322,7 @@ function Index() {
               W
             </div>
             <span className="font-display text-xl tracking-wide text-foreground">
-              WEB<span className="text-web-red-bright">TRUTH</span>
+              WEB OF <span className="text-web-red-bright">TRUST</span>
             </span>
           </div>
           <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
@@ -353,7 +353,7 @@ function Index() {
               YOUR SPIDEY-SENSE FOR <span className="text-web-red-bright">WHAT'S&nbsp;TRUE.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              The city runs on rumors. Webtruth reads any claim, traces every thread of evidence across
+              The city runs on rumors. WEB OF TRUST reads any claim, traces every thread of evidence across
               verified sources, and slings back a verdict — before the story swings past you.
             </p>
           </div>
@@ -432,12 +432,12 @@ function Index() {
       <footer className="relative z-10 border-t border-border/60 bg-night-1/70 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 md:flex-row">
           <span className="font-display tracking-wide text-foreground">
-            WEB<span className="text-web-red-bright">TRUTH</span>
+            WEB OF <span className="text-web-red-bright">TRUST</span>
           </span>
           <p className="font-mono2 text-[11px] uppercase tracking-wider text-muted-foreground">
             Independent verification · friendly neighborhood fact-checker
           </p>
-          <p className="font-mono2 text-[11px] text-muted-foreground">© 2026 Webtruth Labs</p>
+          <p className="font-mono2 text-[11px] text-muted-foreground">© 2026 WEB OF TRUST</p>
         </div>
       </footer>
     </div>
