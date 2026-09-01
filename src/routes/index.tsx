@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -200,6 +200,7 @@ const VERDICTS = [
 function Scanner() {
   const [claim, setClaim] = useState("");
   const [result, setResult] = useState<null | { verdict: string; note: string; conf: number }>(null);
+  const navigate = useNavigate();
 
   const runCheck = () => {
     if (!claim.trim()) return;
@@ -209,6 +210,11 @@ function Scanner() {
       { verdict: "FALSE", note: "No primary record exists. The story originated in a repost chain and contradicts the official dataset.", conf: 91 },
     ];
     setResult(pool[claim.length % pool.length] ?? null);
+  };
+
+  const openFullReport = () => {
+    if (!claim.trim()) return;
+    navigate({ to: "/analysis", search: { claim } });
   };
 
   return (
@@ -243,6 +249,12 @@ function Scanner() {
           >
             Thwip! Run the check
           </button>
+          <button
+            onClick={openFullReport}
+            className="inline-flex items-center gap-2 rounded-xl border border-web-cyan/40 bg-web-cyan/10 px-5 py-3 font-semibold text-web-cyan transition-colors hover:bg-web-cyan/20"
+          >
+            Full trust report
+          </button>
           <span className="text-xs text-muted-foreground">No account needed · verdict in seconds</span>
         </div>
 
@@ -265,6 +277,12 @@ function Scanner() {
                 <span className="font-mono2 text-[11px] text-web-cyan">{result.conf}%</span>
               </div>
             </div>
+            <button
+              onClick={openFullReport}
+              className="mt-3 w-full rounded-lg border border-web-cyan/40 bg-web-cyan/10 px-4 py-2 text-sm font-semibold text-web-cyan transition-colors hover:bg-web-cyan/20"
+            >
+              View full trust report →
+            </button>
           </div>
         )}
       </div>
