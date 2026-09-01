@@ -249,6 +249,12 @@ function Scanner() {
           >
             Thwip! Run the check
           </button>
+          <button
+            onClick={openFullReport}
+            className="inline-flex items-center gap-2 rounded-xl border border-web-cyan/40 bg-web-cyan/10 px-5 py-3 font-semibold text-web-cyan transition-colors hover:bg-web-cyan/20"
+          >
+            Full trust report
+          </button>
           <span className="text-xs text-muted-foreground">No account needed · verdict in seconds</span>
         </div>
 
