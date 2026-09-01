@@ -77,18 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Webtruth — AI Fact-Checker with Spider-Sense" },
+      { title: "WEB OF TRUST — AI Fact-Checker with Spider-Sense" },
       {
         name: "description",
         content:
-          "Webtruth is an AI fact-checker that snags false claims mid-swing. Paste any claim, trace every source, and get a verdict in seconds.",
+          "WEB OF TRUST is an AI fact-checker that snags false claims mid-swing. Paste any claim, trace every source, and get a verdict in seconds.",
       },
-      { name: "author", content: "Webtruth Labs" },
-      { property: "og:title", content: "Webtruth — AI Fact-Checker with Spider-Sense" },
+      { name: "author", content: "WEB OF TRUST" },
+      { property: "og:title", content: "WEB OF TRUST — AI Fact-Checker with Spider-Sense" },
       {
         property: "og:description",
         content:
-          "Paste any claim. Webtruth traces every thread of evidence and returns a verdict before the rumor spreads.",
+          "Paste any claim. WEB OF TRUST traces every thread of evidence and returns a verdict before the rumor spreads.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
