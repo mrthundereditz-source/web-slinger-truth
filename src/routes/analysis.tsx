@@ -406,7 +406,7 @@ function AnalysisPage() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {analysis.sources.map((s, i) => {
-              const Icon = SOURCE_ICONS[i % SOURCE_ICONS.length];
+              const Icon = SOURCE_ICONS[i % SOURCE_ICONS.length] ?? FileText;
               return (
                 <div
                   key={s.name}
