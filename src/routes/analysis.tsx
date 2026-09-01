@@ -110,7 +110,7 @@ function buildAnalysis(claim: string) {
   return { score, confidence, momentum, factors, timeline, sources };
 }
 
-const SOURCE_ICONS = [FileText, Newspaper, GraduationCap, Share2, Globe, Zap, ShieldCheck];
+const SOURCE_ICONS = [FileText, Newspaper, GraduationCap, Share2, Globe, Zap, ShieldCheck] as const;
 
 /* ---------------- shared chrome ---------------- */
 
