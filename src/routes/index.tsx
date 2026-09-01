@@ -200,6 +200,7 @@ const VERDICTS = [
 function Scanner() {
   const [claim, setClaim] = useState("");
   const [result, setResult] = useState<null | { verdict: string; note: string; conf: number }>(null);
+  const navigate = useNavigate();
 
   const runCheck = () => {
     if (!claim.trim()) return;
@@ -209,6 +210,11 @@ function Scanner() {
       { verdict: "FALSE", note: "No primary record exists. The story originated in a repost chain and contradicts the official dataset.", conf: 91 },
     ];
     setResult(pool[claim.length % pool.length] ?? null);
+  };
+
+  const openFullReport = () => {
+    if (!claim.trim()) return;
+    navigate({ to: "/analysis", search: { claim } });
   };
 
   return (
